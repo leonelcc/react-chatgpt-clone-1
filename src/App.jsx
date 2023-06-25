@@ -1,23 +1,24 @@
-import React,{ useState, useEffect, useRef } from 'react'
-import { BiPlus, BiComment, BiUser, BiFace, BiSend } from 'react-icons/bi'
+import React, { useState, useEffect, useRef } from 'react';
+import { BiPlus, BiComment, BiUser, BiFace, BiSend } from 'react-icons/bi';
 import MuiAlert from "@material-ui/lab/Alert";
 
 function Alert(props) {
-  return <MuiAlert elevation={6} 
-                   variant="filled" {...props} />;
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 function App() {
-  const [text, setText] = useState('')
-  const [message, setMessage] = useState(null)
-  const [previousChats, setPreviousChats] = useState([])
-  const [currentTitle, setCurrentTitle] = useState(null)
-  const [isResponseLoading, setIsResponseLoading] = useState(false)
-  const [isRateLimitError, setIsRateLimitError] = useState(false)
-  const [chatType, setChatType] = useState(null) // Adicione esta linha
-  const [subLevel, setSubLevel] = useState(null); // Adicione es
+  const [text, setText] = useState('');
+  const [message, setMessage] = useState(null);
+  const [previousChats, setPreviousChats] = useState([]);
+  const [currentTitle, setCurrentTitle] = useState(null);
+  const [isResponseLoading, setIsResponseLoading] = useState(false);
+  const [isRateLimitError, setIsRateLimitError] = useState(false);
+  const [chatType, setChatType] = useState(null);
+  const [subLevel, setSubLevel] = useState(null);
   const [atuacao, setAtuacao] = useState('');
   const [acao, setAcao] = useState('');
+  const [isInputVisible, setIsInputVisible] = useState(false);
+  const [subLevelName, setSubLevelName] = useState('RD GPT Terminal'); // Adicione esta linha
   const scrollToLastItem = useRef(null)
 
   const createNewChat = (type, level) => {
@@ -25,11 +26,11 @@ function App() {
     setText("");
     setCurrentTitle(null);
     setChatType(type);
-    setSubLevel(level); // Adicione esta linha
+    setSubLevel(level);
+    setSubLevelName(`${type} - ${level.name}`); // Modifique esta linha
     setAtuacao(level ? level.additionalText : '');
     setAcao(level.additionalText1);
-    //setSubLevel(level); // Adicione esta linha
-   // setAdditionalText(level.additionalText); // Adicione esta linha
+    setIsInputVisible(true);
   };
 
   const SubLevelButton = ({ subLevel, onClick }) => {
@@ -231,7 +232,7 @@ function App() {
           <div className="sidebar-info">
             <div className="sidebar-info-upgrade">
               <BiUser />
-              <p>Atualizar para o Plus?</p>
+              <p>Nome do Usuário</p>
             </div>
             <div className="sidebar-info-user">
               <BiFace />
@@ -241,7 +242,7 @@ function App() {
         </section>
 
         <section className="main">
-          {!currentTitle && <h1>RD GPT Terminal</h1>}
+          {!currentTitle && <h1>{subLevelName}</h1>}
           <div className="main-header">
             <ul>
               {currentChat?.map((chatMsg, idx) => (
@@ -269,25 +270,27 @@ function App() {
                 in 20s.
               </p>
             )}
-            <form className="form-container" onSubmit={submitHandler}>
-              <input
-                type="text"
-                placeholder="Digite sua mensagem."
-                spellCheck="false"
-                value={
-                  isResponseLoading
-                    ? 'Carregando...'
-                    : text.charAt(0).toUpperCase() + text.slice(1)
-                }
-                onChange={(e) => setText(e.target.value)}
-                readOnly={isResponseLoading}
-              />
-              {!isResponseLoading && (
-                <button type="submit">
-                  <BiSend size={20} />
-                </button>
-              )}
-            </form>
+            {isInputVisible && (
+              <form className="form-container" onSubmit={submitHandler}>
+                <input
+                  type="text"
+                  placeholder="Digite sua mensagem."
+                  spellCheck="false"
+                  value={
+                    isResponseLoading
+                      ? 'Carregando...'
+                      : text.charAt(0).toUpperCase() + text.slice(1)
+                  }
+                  onChange={(e) => setText(e.target.value)}
+                  readOnly={isResponseLoading}
+                />
+                {!isResponseLoading && (
+                  <button type="submit">
+                    <BiSend size={20} />
+                  </button>
+                )}
+              </form>
+            )}
             <p>
             Visualização de pesquisa gratuita. ChatGPT pode produzir informações imprecisas. ChatGPT Versão de 3 de maio
             </p>
